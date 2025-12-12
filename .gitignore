@@ -1,0 +1,6 @@
+# common ignores - edit as needed
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.env
