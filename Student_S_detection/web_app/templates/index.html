@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Stress Detection System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            padding: 30px 0;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: none;
+            margin-bottom: 30px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-top: 10px;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 10px;
+            transition: all 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .result-card {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stress-low {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        .stress-medium {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+        .stress-high {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        .progress {
+            height: 25px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        .suggestion-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2><i class="fas fa-heartbeat"></i> Student Stress Detection System</h2>
+                        <p class="mb-0">Enter your information to assess your stress level</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="stressForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Study Hours (per day)</label>
+                                    <input type="number" class="form-control" name="study_hours" 
+                                           min="0" max="12" step="0.1" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Sleep Hours (per night)</label>
+                                    <input type="number" class="form-control" name="sleep_hours" 
+                                           min="3" max="10" step="0.1" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Exercise Hours (per week)</label>
+                                    <input type="number" class="form-control" name="exercise_hours" 
+                                           min="0" max="10" step="0.1" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Social Activities (per week)</label>
+                                    <input type="number" class="form-control" name="social_activities" 
+                                           min="0" max="7" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Assignment Deadlines (upcoming)</label>
+                                    <input type="number" class="form-control" name="assignment_deadlines" 
+                                           min="0" max="10" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Exam Pressure (1-10)</label>
+                                    <input type="number" class="form-control" name="exam_pressure" 
+                                           min="1" max="10" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Family Support (1-10)</label>
+                                    <input type="number" class="form-control" name="family_support" 
+                                           min="1" max="10" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Financial Stress (1-10)</label>
+                                    <input type="number" class="form-control" name="financial_stress" 
+                                           min="1" max="10" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Academic Performance (0-100)</label>
+                                    <input type="number" class="form-control" name="academic_performance" 
+                                           min="0" max="100" step="0.1" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Workload Level (1-10)</label>
+                                    <input type="number" class="form-control" name="workload_level" 
+                                           min="1" max="10" required>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-search"></i> Analyze Stress Level
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="loading" id="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Analyzing your data...</p>
+                        </div>
+                        
+                        <div class="result-card card mt-4" id="resultCard">
+                            <div class="card-body">
+                                <h4 class="card-title text-center mb-4">Prediction Results</h4>
+                                
+                                <div class="text-center mb-4">
+                                    <h2 id="stressLevel" class="p-3 rounded"></h2>
+                                </div>
+                                
+                                <h5 class="mb-3">Prediction Probabilities:</h5>
+                                <div id="probabilities"></div>
+                                
+                                <div class="suggestion-box">
+                                    <h5><i class="fas fa-lightbulb"></i> Suggestion:</h5>
+                                    <p id="suggestion" class="mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('stressForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultCard').style.display = 'none';
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Display results
+                    const stressLevel = result.stress_level;
+                    const stressLevelElement = document.getElementById('stressLevel');
+                    stressLevelElement.textContent = `Stress Level: ${stressLevel.toUpperCase()}`;
+                    stressLevelElement.className = `p-3 rounded stress-${stressLevel.toLowerCase()}`;
+                    
+                    // Display probabilities
+                    const probabilitiesDiv = document.getElementById('probabilities');
+                    probabilitiesDiv.innerHTML = '';
+                    for (const [level, prob] of Object.entries(result.probabilities)) {
+                        const probPercent = (prob * 100).toFixed(2);
+                        const colorClass = level === 'low' ? 'success' : 
+                                         level === 'medium' ? 'warning' : 'danger';
+                        probabilitiesDiv.innerHTML += `
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span><strong>${level.charAt(0).toUpperCase() + level.slice(1)}:</strong></span>
+                                    <span>${probPercent}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-${colorClass}" role="progressbar" 
+                                         style="width: ${probPercent}%">${probPercent}%</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Display suggestion
+                    document.getElementById('suggestion').textContent = result.suggestion;
+                    
+                    // Show result card
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('resultCard').style.display = 'block';
+                    
+                    // Scroll to results
+                    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error: ' + result.error);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
